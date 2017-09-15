@@ -69,6 +69,8 @@ The form has its overall validity:
 {{formRef.valid}} // true or false
 
 export class AppComponent {
+    @ViewChild('formRef') form;
+
     username = "John";
     onSubmit(formValue) {
         //
@@ -139,3 +141,38 @@ So the ngModel properties are:
 There are two streams avaialable:
 * valueChanges
 * statusChanges
+
+lifecycle hook
+ngAfterViewInit() {
+    @ViewChild('formRef') form;  // 
+
+}
+
+## Radio buttons
+
+<form>
+    <div *ngFor="let location of locations">
+        <input
+            [id]="location"
+            name="location"
+            [value]="location"
+            ngModel
+            type="radio">
+        <label [attr.for]="location">{{location}}</label>
+    </div>
+</form>
+
+* We need to give an id to our input. The id is a property of input as well as an attribute. Since it is a property, we can put it in [] and assign the evaluated value of location. 
+* In <label> for is not a propterty but an attribute so we put [attr.for]="location".
+* The value of the radio button will be the location that got selected so we put value in [] assign the evaluated value of location.   
+
+## Select dropdowns
+<select name="location"
+    [ngModel]="locations[0]">
+    <option *ngFor="let location of locations"
+    [value]="location">
+    {{location}}
+    </option>
+</select>
+
+Select dropdowns are built with select and option elements. ngModel keeps track of the value as it changes.

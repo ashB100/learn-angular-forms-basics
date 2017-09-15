@@ -24,16 +24,39 @@ import 'rxjs/add/operator/filter';
       <input type="password" ngModel name="password">
     </fieldset>
 
-    <button type="submit">Submit</button>
+    <div *ngFor="let location of locations">
+      <input 
+        [id]="location"
+        name="location"
+        ngModel
+        [value]="location" 
+        type="radio"
+        required>
+      <label [attr.for]="location">{{location}}</label>
+    </div>
+
+    <select name="venue"
+      [ngModel]="locations[0]">
+      <option *ngFor="let location of locations"
+        [value]="location">
+        {{location}}
+      </option>
+    </select>
+    
+    <div>
+      <button type="submit">Submit</button>
+    </div>
+
+    <div>{{formRef.value | json}}</div>
   </form>
   `,
   styles: [`
-    .ng-valid {
-      border: 3px solid green;
-    }
-
     .ng-invalid {
       border: 3px solid red;
+    }
+
+    .ng-invalid + label:after {
+      content: '<--Pick one!!!';
     }
   `]
 })
@@ -41,6 +64,8 @@ export class AppComponent {
   @ViewChild('formRef') form;
 
   username = "Ashnita";
+
+  locations = ["Malta", "England", "Serbia", "Fiji"];
 
   onSubmit(formValue) {
     console.log(formValue); // {login: {username: "", password: ""}}
