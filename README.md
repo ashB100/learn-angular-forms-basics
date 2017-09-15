@@ -73,9 +73,69 @@ export class AppComponent {
     onSubmit(formValue) {
         //
     }
+    
+    ngAfterViewInit() {
+
+    // Everytime the form changes its going 
+    // to pass the value along
+    /*this.form.valueChanges
+      .subscribe(v => console.table(v)); */
+
+    // Everytime the status of the fom changes
+    /*this.form.statusChanges
+      .subscribe(v => console.log(v)); */
+
+    // We only want valid changes
+    Observable.combineLatest(
+      this.form.statusChanges,
+      this.form.valueChanges,
+      (status, value) => ({status, value})
+    )
+      .filter(({status}) => status === 'VALID')
+      .subscribe(({value}) => console.table(value));
+  }
 }
 
 In a form the form elements need to have:
 * name
 * ngModel
-* type
+
+
+##Style validation
+
+classes:
+ng-untouched
+ng-touched
+ng-prestine
+ng-dirty
+ng-valid
+ng-invalid
+
+This allows us to style these input fields withh our own custom styles based on these classes.
+
+styles: [`
+    .ng-invalid {
+        border: 3px solid red;
+    }
+
+    .ng-valid {
+        border: 3px solid green;
+    }
+`]
+
+While ng-prestine and ng-untouched are classes that you could create styles for they are also properties on the ngModel as well:
+
+{{usernameRef.untouched}} // true means you've gone in the input field and lost focus
+{{usernameRef.prestine}} // false means the original value has been changed, even if its been changed back to the same value.  
+
+So the ngModel properties are:
+* pristine
+* dirty
+* touched
+* untouched
+
+## RxJS streams with angular 2 forms
+
+There are two streams avaialable:
+* valueChanges
+* statusChanges

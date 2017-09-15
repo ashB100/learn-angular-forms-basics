@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/combineLatest';
+import 'rxjs/add/operator/filter';
 
 @Component({
   selector: 'app-root',
@@ -24,12 +27,42 @@ import { Component } from '@angular/core';
     <button type="submit">Submit</button>
   </form>
   `,
-  styleUrls: ['./app.component.css']
+  styles: [`
+    .ng-valid {
+      border: 3px solid green;
+    }
+
+    .ng-invalid {
+      border: 3px solid red;
+    }
+  `]
 })
 export class AppComponent {
+  @ViewChild('formRef') form;
+
   username = "Ashnita";
 
   onSubmit(formValue) {
     console.log(formValue); // {login: {username: "", password: ""}}
+  }
+
+  ngAfterViewInit() {
+    // Everytime the form changes its going 
+    // to pass the value along
+    /*this.form.valueChanges
+      .subscribe(v => console.table(v)); */
+
+    // Everytime the status of the fom changes
+    /*this.form.statusChanges
+      .subscribe(v => console.log(v)); */
+
+    // We only want valid changes
+    Observable.combineLatest(
+      this.form.statusChanges,
+      this.form.valueChanges,
+      (status, value) => ({status, value})
+    )
+      .filter(({status}) => status === 'VALID')
+      .subscribe(({value}) => console.table(value));
   }
 }
